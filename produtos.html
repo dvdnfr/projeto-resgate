@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Produtos / Estoque | Projeto Resgate</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="app-body">
+    <aside class="sidebar">
+      <a class="app-brand" href="dashboard.html">
+        <span class="brand-symbol" aria-hidden="true">PR</span>
+        <span><strong>Projeto Resgate</strong><small>Acolhimento e esperança</small></span>
+      </a>
+      <nav class="app-nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a class="active" href="produtos.html">Produtos / Estoque</a>
+        <a href="saida-produtos.html">Saída de Produtos</a>
+        <a href="usuarios.html">Usuários</a>
+        <a href="relatorios.html">Relatórios</a>
+      </nav>
+      <button class="nav-logout" type="button" data-logout>Logout</button>
+    </aside>
+
+    <main class="app-main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Entrada e controle</p>
+          <h1>Produtos / Estoque</h1>
+        </div>
+        <div class="topbar-actions">
+          <button class="primary-button" type="button" id="new-product-button">Novo produto</button>
+          <div class="user-chip" id="user-chip">Usuário logado</div>
+        </div>
+      </header>
+
+      <section class="summary-grid">
+        <article class="summary-card">
+          <span>Total de produtos</span>
+          <strong id="summary-products">0</strong>
+        </article>
+        <article class="summary-card">
+          <span>Total em estoque</span>
+          <strong id="summary-stock">0</strong>
+        </article>
+        <article class="summary-card">
+          <span>Estoque baixo</span>
+          <strong id="summary-low-stock">0</strong>
+        </article>
+      </section>
+
+      <section class="content-panel" id="product-form-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Cadastro</p>
+            <h2 id="product-form-title">Novo produto</h2>
+          </div>
+          <button class="secondary-button" type="button" id="clear-product-form">Limpar</button>
+        </div>
+
+        <form class="data-form" id="product-form">
+          <input type="hidden" name="id" />
+          <label>Nome do produto<input name="nome" required /></label>
+          <label>Categoria
+            <select name="categoria" required>
+              <option value="">Selecione</option>
+              <option value="alimento">Alimento</option>
+              <option value="higiene">Higiene</option>
+              <option value="limpeza">Limpeza</option>
+              <option value="roupa">Roupa</option>
+              <option value="medicamento">Medicamento</option>
+              <option value="outro">Outro</option>
+            </select>
+          </label>
+          <label>Origem
+            <select name="origem" required>
+              <option value="">Selecione</option>
+              <option value="doacao">Doação</option>
+              <option value="compra">Compra</option>
+              <option value="outro">Outro</option>
+            </select>
+          </label>
+          <label>Doador ou fornecedor<input name="doador_fornecedor" /></label>
+          <label>Quantidade<input type="number" min="0.01" step="0.01" name="quantidade" required /></label>
+          <label>Unidade de medida
+            <select name="unidade_medida" required>
+              <option value="">Selecione</option>
+              <option value="unidade">Unidade</option>
+              <option value="kg">Kg</option>
+              <option value="litro">Litro</option>
+              <option value="pacote">Pacote</option>
+              <option value="caixa">Caixa</option>
+            </select>
+          </label>
+          <label>Data de entrada<input type="date" name="data_entrada" required /></label>
+          <label class="full-field">Observações<textarea name="observacoes" rows="3"></textarea></label>
+          <p class="form-message" id="product-message"></p>
+          <button class="primary-button" type="submit">Salvar produto</button>
+        </form>
+      </section>
+
+      <section class="content-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Consulta</p>
+            <h2>Produtos cadastrados</h2>
+          </div>
+        </div>
+
+        <div class="filters-bar">
+          <input id="search-product" type="search" placeholder="Buscar por nome" />
+          <select id="filter-category">
+            <option value="">Todas as categorias</option>
+            <option value="alimento">Alimento</option>
+            <option value="higiene">Higiene</option>
+            <option value="limpeza">Limpeza</option>
+            <option value="roupa">Roupa</option>
+            <option value="medicamento">Medicamento</option>
+            <option value="outro">Outro</option>
+          </select>
+          <select id="filter-origin">
+            <option value="">Todas as origens</option>
+            <option value="doacao">Doação</option>
+            <option value="compra">Compra</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th>Origem</th>
+                <th>Doador/fornecedor</th>
+                <th>Estoque atual</th>
+                <th>Entrada</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="products-table"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script src="js/produtos.js"></script>
+  </body>
+</html>

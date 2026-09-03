@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Projeto Resgate</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main class="auth-page">
+      <section class="auth-panel" aria-labelledby="login-title">
+        <a class="login-logo" href="index.html" aria-label="Projeto Resgate">
+          <img
+            src="assets/logo-projeto-resgate.png"
+            alt="Projeto Resgate"
+            class="logo-image login-logo-image"
+          />
+        </a>
+        <p class="eyebrow">Comunidade Terapêutica</p>
+        <h1 id="login-title">Projeto Resgate</h1>
+        <p class="support-text">Acolhimento, respeito e esperança</p>
+
+        <form id="login-form" class="login-form" novalidate>
+          <div class="form-field">
+            <label for="username">Usuário</label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              autocomplete="username"
+              placeholder="Digite seu usuário"
+              required
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="password">Senha</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Digite sua senha"
+              required
+            />
+          </div>
+
+          <p id="login-message" class="form-message" role="alert" aria-live="polite"></p>
+
+          <button type="submit" class="primary-button">Entrar</button>
+        </form>
+      </section>
+
+      <aside class="mission-panel" aria-label="Missão do Projeto Resgate">
+        <div>
+          <p class="mission-title">Plataforma de apoio institucional</p>
+          <p>
+            Uma base digital para organizar o acesso, fortalecer a comunicação
+            e preparar novos recursos de captação de doações.
+          </p>
+        </div>
+      </aside>
+    </main>
+
+    <script src="js/login.js"></script>
+  </body>
+</html>

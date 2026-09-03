@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saída de Produtos | Projeto Resgate</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="app-body">
+    <aside class="sidebar">
+      <a class="app-brand" href="dashboard.html">
+        <span class="brand-symbol" aria-hidden="true">PR</span>
+        <span><strong>Projeto Resgate</strong><small>Acolhimento e esperança</small></span>
+      </a>
+      <nav class="app-nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="produtos.html">Produtos / Estoque</a>
+        <a class="active" href="saida-produtos.html">Saída de Produtos</a>
+        <a href="usuarios.html">Usuários</a>
+        <a href="relatorios.html">Relatórios</a>
+      </nav>
+      <button class="nav-logout" type="button" data-logout>Logout</button>
+    </aside>
+
+    <main class="app-main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Baixa no estoque</p>
+          <h1>Saída de Produtos</h1>
+        </div>
+        <div class="user-chip" id="user-chip">Usuário logado</div>
+      </header>
+
+      <section class="content-grid">
+        <article class="content-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Registro</p>
+              <h2>Registrar saída</h2>
+            </div>
+          </div>
+
+          <form class="data-form single-column-form" id="stock-exit-form">
+            <label>Produto
+              <select name="produto_id" id="product-select" required>
+                <option value="">Selecione um produto</option>
+              </select>
+            </label>
+            <label>Quantidade de saída<input type="number" min="0.01" step="0.01" name="quantidade" required /></label>
+            <label>Motivo da saída
+              <select name="motivo" required>
+                <option value="">Selecione</option>
+                <option value="Consumo interno">Consumo interno</option>
+                <option value="Entrega para assistido">Entrega para assistido</option>
+                <option value="Doação para terceiro">Doação para terceiro</option>
+                <option value="Perda/vencimento">Perda/vencimento</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </label>
+            <label>Responsável pela retirada<input name="responsavel" required /></label>
+            <label>Data da saída<input type="date" name="data_saida" required /></label>
+            <label>Observações<textarea name="observacoes" rows="3"></textarea></label>
+            <p class="form-message" id="stock-exit-message"></p>
+            <button class="primary-button" type="submit">Registrar saída</button>
+          </form>
+        </article>
+
+        <aside class="content-panel stock-side-panel">
+          <p class="eyebrow">Produto selecionado</p>
+          <h2 id="selected-product-name">Nenhum produto selecionado</h2>
+          <div class="stock-display">
+            <span>Estoque atual</span>
+            <strong id="selected-product-stock">0</strong>
+          </div>
+          <p id="selected-product-meta">Selecione um produto para visualizar categoria, origem e unidade.</p>
+        </aside>
+      </section>
+
+      <section class="content-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Histórico</p>
+            <h2>Últimas movimentações</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Tipo</th>
+                <th>Quantidade</th>
+                <th>Origem/motivo</th>
+                <th>Responsável</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody id="movements-table"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script src="js/saida-produtos.js"></script>
+  </body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Relatórios | Projeto Resgate</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="app-body">
+    <aside class="sidebar">
+      <a class="app-brand" href="dashboard.html">
+        <span class="brand-symbol" aria-hidden="true">PR</span>
+        <span><strong>Projeto Resgate</strong><small>Acolhimento e esperança</small></span>
+      </a>
+      <nav class="app-nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="produtos.html">Produtos / Estoque</a>
+        <a href="saida-produtos.html">Saída de Produtos</a>
+        <a href="usuarios.html">Usuários</a>
+        <a class="active" href="relatorios.html">Relatórios</a>
+      </nav>
+      <button class="nav-logout" type="button" data-logout>Logout</button>
+    </aside>
+
+    <main class="app-main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Indicadores de estoque</p>
+          <h1>Relatórios</h1>
+        </div>
+        <div class="user-chip" id="user-chip">Usuário logado</div>
+      </header>
+
+      <section class="summary-grid">
+        <article class="summary-card">
+          <span>Entradas registradas</span>
+          <strong id="report-total-entries">0</strong>
+        </article>
+        <article class="summary-card">
+          <span>Saídas registradas</span>
+          <strong id="report-total-exits">0</strong>
+        </article>
+        <article class="summary-card">
+          <span>Quantidade atual em estoque</span>
+          <strong id="report-total-stock">0</strong>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <article class="content-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Produtos</p>
+              <h2>Produtos mais movimentados</h2>
+            </div>
+          </div>
+          <div id="most-moved-products" class="stack-list"></div>
+        </article>
+
+        <article class="content-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Movimentações</p>
+              <h2>Histórico de movimentações</h2>
+            </div>
+          </div>
+          <div id="latest-movements" class="stack-list"></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script src="js/relatorios.js"></script>
+  </body>
+</html>
