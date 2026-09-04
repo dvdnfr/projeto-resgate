@@ -10,6 +10,7 @@ const filterOrigin = document.querySelector('#filter-origin');
 const summaryProducts = document.querySelector('#summary-products');
 const summaryStock = document.querySelector('#summary-stock');
 const summaryLowStock = document.querySelector('#summary-low-stock');
+const validityAlert = document.querySelector('#validity-alert');
 
 let products = [];
 
@@ -21,9 +22,110 @@ function resetProductForm() {
   showMessage(productMessage, '');
 }
 
+function getDaysUntilExpiry(dataValidade) {
+  if (!dataValidade) {
+    return null;
+  }
+
+  const dataTexto = String(dataValidade).substring(0, 10);
+  const partes = dataTexto.split('-');
+
+  if (partes.length !== 3) {
+    return null;
+  }
+
+  const ano = Number(partes[0]);
+  const mes = Number(partes[1]);
+  const dia = Number(partes[2]);
+
+  if (!ano || !mes || !dia) {
+    return null;
+  }
+
+  const validade = new Date(ano, mes - 1, dia);
+
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+
+  const diferencaMs = validade - hoje;
+
+  return Math.ceil(
+    diferencaMs / (1000 * 60 * 60 * 24)
+  );
+}
+
+function getValidityStatus(dataValidade) {
+  const diasRestantes = getDaysUntilExpiry(dataValidade);
+
+  if (diasRestantes === null) {
+    return '';
+  }
+
+  if (diasRestantes < 0) {
+    return '<span class="validity-badge validity-expired">Vencido</span>';
+  }
+
+  if (diasRestantes === 0) {
+    return '<span class="validity-badge validity-warning">Vence hoje</span>';
+  }
+
+  if (diasRestantes === 1) {
+    return '<span class="validity-badge validity-warning">Vence amanhã</span>';
+  }
+
+  if (diasRestantes <= 7) {
+    return `<span class="validity-badge validity-warning">Vence em ${diasRestantes} dias</span>`;
+  }
+
+  return '<span class="validity-badge validity-ok">Dentro da validade</span>';
+}
+
+function renderValidityAlert() {
+  const productsNearExpiry = products.filter((product) => {
+    const diasRestantes = getDaysUntilExpiry(product.data_validade);
+
+    return (
+      diasRestantes !== null &&
+      diasRestantes >= 0 &&
+      diasRestantes <= 7
+    );
+  });
+
+  const expiredProducts = products.filter((product) => {
+    const diasRestantes = getDaysUntilExpiry(product.data_validade);
+
+    return diasRestantes !== null && diasRestantes < 0;
+  });
+
+  let messages = [];
+
+  if (expiredProducts.length > 0) {
+    messages.push(
+      `🔴 <strong>${expiredProducts.length} produto(s) estão vencidos.</strong>`
+    );
+  }
+
+  if (productsNearExpiry.length > 0) {
+    messages.push(
+      `🟡 <strong>${productsNearExpiry.length} produto(s) vencem nos próximos 7 dias.</strong>`
+    );
+  }
+
+  if (messages.length === 0) {
+    validityAlert.innerHTML = '';
+    return;
+  }
+
+  validityAlert.innerHTML = `
+    <div class="validity-alert">
+      ${messages.join('<br>')}
+    </div>
+  `;
+}
+
 function renderProducts() {
   if (!products.length) {
-    productsTable.innerHTML = emptyRow(7, 'Nenhum produto cadastrado.');
+    productsTable.innerHTML = emptyRow(8, 'Nenhum produto cadastrado.');
     return;
   }
 
@@ -39,6 +141,9 @@ function renderProducts() {
       <td>${Number(product.quantidade).toLocaleString('pt-BR')} ${escapeHtml(product.unidade_medida)}</td>
       <td>${formatDate(product.data_entrada)}</td>
       <td>
+          ${product.data_validade ? formatDate(product.data_validade) : '-'}
+          ${getValidityStatus(product.data_validade)}
+      </td>
         <div class="actions">
           <button class="table-button" type="button" data-edit="${product.id}">Editar</button>
           <button class="danger-button" type="button" data-delete="${product.id}">Excluir</button>
@@ -65,6 +170,7 @@ async function loadProducts() {
   const data = await apiRequest(`/api/produtos?${params.toString()}`);
   products = data.data;
   renderProducts();
+  renderValidityAlert();
   await loadSummary();
 }
 
@@ -104,6 +210,7 @@ productsTable.addEventListener('click', async (event) => {
     productForm.elements.quantidade.min = '0';
     productForm.elements.unidade_medida.value = product.unidade_medida;
     productForm.elements.data_entrada.value = toInputDate(product.data_entrada);
+    productForm.elements.data_validade.value = toInputDate(product.data_validade);
     productForm.elements.observacoes.value = product.observacoes || '';
     productFormTitle.textContent = 'Editar produto';
     document.querySelector('#product-form-panel').scrollIntoView({ behavior: 'smooth' });

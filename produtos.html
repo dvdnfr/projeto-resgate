@@ -49,6 +49,8 @@
         </article>
       </section>
 
+      <div id="validity-alert"></div>
+
       <section class="content-panel" id="product-form-panel">
         <div class="section-heading">
           <div>
@@ -93,6 +95,7 @@
             </select>
           </label>
           <label>Data de entrada<input type="date" name="data_entrada" required /></label>
+          <label>Data de validade<input type="date" name="data_validade" /></label>
           <label class="full-field">Observações<textarea name="observacoes" rows="3"></textarea></label>
           <p class="form-message" id="product-message"></p>
           <button class="primary-button" type="submit">Salvar produto</button>
@@ -136,6 +139,7 @@
                 <th>Doador/fornecedor</th>
                 <th>Estoque atual</th>
                 <th>Entrada</th>
+                <th>Validade</th>
                 <th>Ações</th>
               </tr>
             </thead>

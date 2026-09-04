@@ -30,8 +30,8 @@ async function listProducts(req, res) {
 
   try {
     const [products] = await pool.execute(
-      `SELECT id, nome, categoria, origem, doador_fornecedor, quantidade, unidade_medida,
-              data_entrada, observacoes, criado_em
+      `SELECT id, nome, categoria, origem, doador_fornecedor, quantidade,
+              unidade_medida, data_entrada, data_validade, observacoes, criado_em
        FROM produtos
        ${where}
        ORDER BY nome ASC`,
@@ -41,15 +41,18 @@ async function listProducts(req, res) {
     return res.json({ success: true, data: products });
   } catch (error) {
     console.error('Erro ao listar produtos:', error);
-    return res.status(500).json({ success: false, message: 'Erro ao listar produtos.' });
+    return res.status(500).json({
+      success: false,
+      message: 'Erro ao listar produtos.'
+    });
   }
 }
 
 async function getProduct(req, res) {
   try {
     const [products] = await pool.execute(
-      `SELECT id, nome, categoria, origem, doador_fornecedor, quantidade, unidade_medida,
-              data_entrada, observacoes, criado_em
+      `SELECT id, nome, categoria, origem, doador_fornecedor, quantidade,
+              unidade_medida, data_entrada, data_validade, observacoes, criado_em
        FROM produtos
        WHERE id = ?
        LIMIT 1`,
@@ -57,13 +60,22 @@ async function getProduct(req, res) {
     );
 
     if (!products.length) {
-      return res.status(404).json({ success: false, message: 'Produto não encontrado.' });
+      return res.status(404).json({
+        success: false,
+        message: 'Produto não encontrado.'
+      });
     }
 
-    return res.json({ success: true, data: products[0] });
+    return res.json({
+      success: true,
+      data: products[0]
+    });
   } catch (error) {
     console.error('Erro ao buscar produto:', error);
-    return res.status(500).json({ success: false, message: 'Erro ao buscar produto.' });
+    return res.status(500).json({
+      success: false,
+      message: 'Erro ao buscar produto.'
+    });
   }
 }
 
@@ -77,10 +89,16 @@ async function getProductSummary(req, res) {
        FROM produtos`
     );
 
-    return res.json({ success: true, data: summary });
+    return res.json({
+      success: true,
+      data: summary
+    });
   } catch (error) {
     console.error('Erro ao buscar resumo de produtos:', error);
-    return res.status(500).json({ success: false, message: 'Erro ao buscar resumo de produtos.' });
+    return res.status(500).json({
+      success: false,
+      message: 'Erro ao buscar resumo de produtos.'
+    });
   }
 }
 
@@ -93,17 +111,24 @@ async function createProduct(req, res) {
     quantidade,
     unidade_medida,
     data_entrada,
+    data_validade,
     observacoes
   } = req.body;
 
   const parsedQuantity = parsePositiveQuantity(quantidade);
 
   if (!nome || !categoria || !origem || !quantidade || !unidade_medida || !data_entrada) {
-    return res.status(400).json({ success: false, message: 'Preencha os campos obrigatórios.' });
+    return res.status(400).json({
+      success: false,
+      message: 'Preencha os campos obrigatórios.'
+    });
   }
 
   if (parsedQuantity <= 0) {
-    return res.status(400).json({ success: false, message: 'A quantidade deve ser maior que zero.' });
+    return res.status(400).json({
+      success: false,
+      message: 'A quantidade deve ser maior que zero.'
+    });
   }
 
   const connection = await pool.getConnection();
@@ -113,8 +138,18 @@ async function createProduct(req, res) {
 
     const [result] = await connection.execute(
       `INSERT INTO produtos
-        (nome, categoria, origem, doador_fornecedor, quantidade, unidade_medida, data_entrada, observacoes)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        (
+          nome,
+          categoria,
+          origem,
+          doador_fornecedor,
+          quantidade,
+          unidade_medida,
+          data_entrada,
+          data_validade,
+          observacoes
+        )
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         nome,
         categoria,
@@ -123,13 +158,22 @@ async function createProduct(req, res) {
         parsedQuantity,
         unidade_medida,
         data_entrada,
+        data_validade || null,
         observacoes || null
       ]
     );
 
     await connection.execute(
       `INSERT INTO movimentacoes_estoque
-        (produto_id, tipo_movimentacao, quantidade, origem_motivo, responsavel, data_movimentacao, observacoes)
+        (
+          produto_id,
+          tipo_movimentacao,
+          quantidade,
+          origem_motivo,
+          responsavel,
+          data_movimentacao,
+          observacoes
+        )
        VALUES (?, 'entrada', ?, ?, ?, ?, ?)`,
       [
         result.insertId,
@@ -143,11 +187,18 @@ async function createProduct(req, res) {
 
     await connection.commit();
 
-    return res.status(201).json({ success: true, message: 'Produto cadastrado e entrada registrada com sucesso.' });
+    return res.status(201).json({
+      success: true,
+      message: 'Produto cadastrado e entrada registrada com sucesso.'
+    });
   } catch (error) {
     await connection.rollback();
     console.error('Erro ao cadastrar produto:', error);
-    return res.status(500).json({ success: false, message: 'Erro ao cadastrar produto.' });
+
+    return res.status(500).json({
+      success: false,
+      message: 'Erro ao cadastrar produto.'
+    });
   } finally {
     connection.release();
   }
@@ -155,6 +206,7 @@ async function createProduct(req, res) {
 
 async function updateProduct(req, res) {
   const { id } = req.params;
+
   const {
     nome,
     categoria,
@@ -163,24 +215,39 @@ async function updateProduct(req, res) {
     quantidade,
     unidade_medida,
     data_entrada,
+    data_validade,
     observacoes
   } = req.body;
 
   const parsedQuantity = parsePositiveQuantity(quantidade);
 
   if (!nome || !categoria || !origem || !quantidade || !unidade_medida || !data_entrada) {
-    return res.status(400).json({ success: false, message: 'Preencha os campos obrigatórios.' });
+    return res.status(400).json({
+      success: false,
+      message: 'Preencha os campos obrigatórios.'
+    });
   }
 
   if (parsedQuantity < 0) {
-    return res.status(400).json({ success: false, message: 'A quantidade não pode ser negativa.' });
+    return res.status(400).json({
+      success: false,
+      message: 'A quantidade não pode ser negativa.'
+    });
   }
 
   try {
     const [result] = await pool.execute(
       `UPDATE produtos
-       SET nome = ?, categoria = ?, origem = ?, doador_fornecedor = ?, quantidade = ?,
-           unidade_medida = ?, data_entrada = ?, observacoes = ?
+       SET
+         nome = ?,
+         categoria = ?,
+         origem = ?,
+         doador_fornecedor = ?,
+         quantidade = ?,
+         unidade_medida = ?,
+         data_entrada = ?,
+         data_validade = ?,
+         observacoes = ?
        WHERE id = ?`,
       [
         nome,
@@ -190,31 +257,51 @@ async function updateProduct(req, res) {
         parsedQuantity,
         unidade_medida,
         data_entrada,
+        data_validade || null,
         observacoes || null,
         id
       ]
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ success: false, message: 'Produto não encontrado.' });
+      return res.status(404).json({
+        success: false,
+        message: 'Produto não encontrado.'
+      });
     }
 
-    return res.json({ success: true, message: 'Produto atualizado com sucesso.' });
+    return res.json({
+      success: true,
+      message: 'Produto atualizado com sucesso.'
+    });
   } catch (error) {
     console.error('Erro ao atualizar produto:', error);
-    return res.status(500).json({ success: false, message: 'Erro ao atualizar produto.' });
+
+    return res.status(500).json({
+      success: false,
+      message: 'Erro ao atualizar produto.'
+    });
   }
 }
 
 async function deleteProduct(req, res) {
   try {
-    const [result] = await pool.execute('DELETE FROM produtos WHERE id = ?', [req.params.id]);
+    const [result] = await pool.execute(
+      'DELETE FROM produtos WHERE id = ?',
+      [req.params.id]
+    );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ success: false, message: 'Produto não encontrado.' });
+      return res.status(404).json({
+        success: false,
+        message: 'Produto não encontrado.'
+      });
     }
 
-    return res.json({ success: true, message: 'Produto excluído com sucesso.' });
+    return res.json({
+      success: true,
+      message: 'Produto excluído com sucesso.'
+    });
   } catch (error) {
     if (error.code === 'ER_ROW_IS_REFERENCED_2') {
       return res.status(409).json({
@@ -224,20 +311,37 @@ async function deleteProduct(req, res) {
     }
 
     console.error('Erro ao excluir produto:', error);
-    return res.status(500).json({ success: false, message: 'Erro ao excluir produto.' });
+
+    return res.status(500).json({
+      success: false,
+      message: 'Erro ao excluir produto.'
+    });
   }
 }
 
 async function registerProductExit(req, res) {
-  const { quantidade, motivo, responsavel, data_saida, observacoes } = req.body;
+  const {
+    quantidade,
+    motivo,
+    responsavel,
+    data_saida,
+    observacoes
+  } = req.body;
+
   const parsedQuantity = parsePositiveQuantity(quantidade);
 
   if (!quantidade || !motivo || !responsavel || !data_saida) {
-    return res.status(400).json({ success: false, message: 'Preencha os campos obrigatórios da saída.' });
+    return res.status(400).json({
+      success: false,
+      message: 'Preencha os campos obrigatórios da saída.'
+    });
   }
 
   if (parsedQuantity <= 0) {
-    return res.status(400).json({ success: false, message: 'A quantidade de saída deve ser maior que zero.' });
+    return res.status(400).json({
+      success: false,
+      message: 'A quantidade de saída deve ser maior que zero.'
+    });
   }
 
   const connection = await pool.getConnection();
@@ -254,11 +358,16 @@ async function registerProductExit(req, res) {
 
     if (!product) {
       await connection.rollback();
-      return res.status(404).json({ success: false, message: 'Produto não encontrado.' });
+
+      return res.status(404).json({
+        success: false,
+        message: 'Produto não encontrado.'
+      });
     }
 
     if (Number(product.quantidade) < parsedQuantity) {
       await connection.rollback();
+
       return res.status(400).json({
         success: false,
         message: `Estoque insuficiente. Disponível: ${product.quantidade}.`
@@ -272,18 +381,40 @@ async function registerProductExit(req, res) {
 
     await connection.execute(
       `INSERT INTO movimentacoes_estoque
-        (produto_id, tipo_movimentacao, quantidade, origem_motivo, responsavel, data_movimentacao, observacoes)
+        (
+          produto_id,
+          tipo_movimentacao,
+          quantidade,
+          origem_motivo,
+          responsavel,
+          data_movimentacao,
+          observacoes
+        )
        VALUES (?, 'saida', ?, ?, ?, ?, ?)`,
-      [req.params.id, parsedQuantity, motivo, responsavel, data_saida, observacoes || null]
+      [
+        req.params.id,
+        parsedQuantity,
+        motivo,
+        responsavel,
+        data_saida,
+        observacoes || null
+      ]
     );
 
     await connection.commit();
 
-    return res.status(201).json({ success: true, message: 'Saída registrada com sucesso.' });
+    return res.status(201).json({
+      success: true,
+      message: 'Saída registrada com sucesso.'
+    });
   } catch (error) {
     await connection.rollback();
     console.error('Erro ao registrar saída:', error);
-    return res.status(500).json({ success: false, message: 'Erro ao registrar saída.' });
+
+    return res.status(500).json({
+      success: false,
+      message: 'Erro ao registrar saída.'
+    });
   } finally {
     connection.release();
   }

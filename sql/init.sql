@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS produtos (
   quantidade DECIMAL(10, 2) NOT NULL,
   unidade_medida VARCHAR(20) NOT NULL,
   data_entrada DATE NOT NULL,
+  date_validade DATE NULL,
   observacoes TEXT,
   criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -47,16 +48,16 @@ SET @column_exists = (
   FROM INFORMATION_SCHEMA.COLUMNS
   WHERE TABLE_SCHEMA = 'projeto_resgate'
     AND TABLE_NAME = 'produtos'
-    AND COLUMN_NAME = 'origem'
+    AND COLUMN_NAME = 'data_validade'
 );
 
-SET @alter_produtos_origem = IF(
+SET @alter_produtos_validade; = IF(
   @column_exists = 0,
-  'ALTER TABLE produtos ADD COLUMN origem VARCHAR(30) NOT NULL DEFAULT ''doacao'' AFTER categoria',
-  'SELECT ''Coluna origem ja existe'' AS status'
+  'ALTER TABLE produtos ADD COLUMN data_validade VARCHAR(30) NOT NULL DEFAULT ''doacao'' AFTER categoria',
+  'SELECT ''Coluna data_validade ja existe'' AS status'
 );
 
-PREPARE stmt FROM @alter_produtos_origem;
+PREPARE stmt FROM @alter_produtos_validade;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
@@ -65,16 +66,16 @@ SET @column_exists = (
   FROM INFORMATION_SCHEMA.COLUMNS
   WHERE TABLE_SCHEMA = 'projeto_resgate'
     AND TABLE_NAME = 'produtos'
-    AND COLUMN_NAME = 'doador_fornecedor'
+    AND COLUMN_NAME = 'data_validade'
 );
 
-SET @alter_produtos_doador = IF(
+SET @alter_produtos_validade = IF(
   @column_exists = 0,
-  'ALTER TABLE produtos ADD COLUMN doador_fornecedor VARCHAR(100) NULL AFTER origem',
-  'SELECT ''Coluna doador_fornecedor ja existe'' AS status'
+  'ALTER TABLE produtos ADD COLUMN data_validade DATE NULL AFTER data_entrada',
+  'SELECT ''Coluna data_validade ja existe'' AS status'
 );
 
-PREPARE stmt FROM @alter_produtos_doador;
+PREPARE stmt FROM @alter_produtos_validade;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
