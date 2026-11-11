@@ -627,4 +627,42 @@ td strong {
   .content-panel {
     padding: 20px;
   }
+
+  /* Ajuste do cabeçalho da barra lateral */
+.sidebar .app-brand {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 15px 10px !important;
+  text-decoration: none !important;
+  overflow: hidden !important;
+}
+
+/* Forçar tamanho pequeno e proporcional para o logo */
+.sidebar .app-logo,
+img.app-logo {
+  width: 45px !important;
+  height: 45px !important;
+  max-width: 45px !important;
+  max-height: 45px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+}
+
+/* Garantir que o texto ao lado do logo fica bem formatado */
+.sidebar .app-brand span {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.sidebar .app-brand strong {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.sidebar .app-brand small {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+ 
 }

@@ -9,7 +9,7 @@
   <body class="app-body">
     <aside class="sidebar">
       <a class="app-brand" href="dashboard.html">
-        <span class="brand-symbol" aria-hidden="true">PR</span>
+        <img src="assets/logo-projeto-resgate.png" alt="Logo Projeto Resgate" class="app-logo" style="max-width: 45px !important; max-height: 45px !important; width: 45px !important; height: auto !important; object-fit: contain !important;">
         <span><strong>Projeto Resgate</strong><small>Acolhimento e esperança</small></span>
       </a>
       <nav class="app-nav">
@@ -63,25 +63,34 @@
         <form class="data-form" id="product-form">
           <input type="hidden" name="id" />
           <label>Nome do produto<input name="nome" required /></label>
+          
           <label>Categoria
-            <select name="categoria" required>
-              <option value="">Selecione</option>
-              <option value="alimento">Alimento</option>
-              <option value="higiene">Higiene</option>
-              <option value="limpeza">Limpeza</option>
-              <option value="roupa">Roupa</option>
-              <option value="medicamento">Medicamento</option>
-              <option value="outro">Outro</option>
-            </select>
+            <div style="display: flex; gap: 6px;">
+              <select id="categoria-select" name="categoria" required style="flex: 1;">
+                <option value="">Selecione</option>
+                <option value="alimento">Alimento</option>
+                <option value="higiene">Higiene</option>
+                <option value="limpeza">Limpeza</option>
+                <option value="roupa">Roupa</option>
+                <option value="medicamento">Medicamento</option>
+                <option value="outro">Outro</option>
+              </select>
+              <button type="button" class="secondary-button" onclick="adicionarNovaCategoria()" title="Adicionar nova categoria" style="padding: 0 12px; font-weight: bold;">+</button>
+            </div>
           </label>
+
           <label>Origem
-            <select name="origem" required>
-              <option value="">Selecione</option>
-              <option value="doacao">Doação</option>
-              <option value="compra">Compra</option>
-              <option value="outro">Outro</option>
-            </select>
+            <div style="display: flex; gap: 6px;">
+              <select id="origem-select" name="origem" required style="flex: 1;">
+                <option value="">Selecione</option>
+                <option value="doacao">Doação</option>
+                <option value="compra">Compra</option>
+                <option value="outro">Outro</option>
+              </select>
+              <button type="button" class="secondary-button" onclick="adicionarNovaOrigem()" title="Adicionar nova origem" style="padding: 0 12px; font-weight: bold;">+</button>
+            </div>
           </label>
+
           <label>Doador ou fornecedor<input name="doador_fornecedor" /></label>
           <label>Quantidade<input type="number" min="0.01" step="0.01" name="quantidade" required /></label>
           <label>Unidade de medida
@@ -140,6 +149,7 @@
                 <th>Estoque atual</th>
                 <th>Entrada</th>
                 <th>Validade</th>
+                <th>Observações</th>
                 <th>Ações</th>
               </tr>
             </thead>

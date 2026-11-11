@@ -31,9 +31,9 @@ async function getDashboard(req, res) {
     );
 
     const [lowStockProducts] = await pool.execute(
-      `SELECT id, nome, categoria, quantidade, unidade_medida
-       FROM produtos
-       WHERE quantidade <= 5
+      `SELECT id, nome, categoria, quantidade, unidade_medida, observacao
+       FROM produtos 
+       WHERE quantidade <= 5;
        ORDER BY quantidade ASC, nome ASC
        LIMIT 5`
     );

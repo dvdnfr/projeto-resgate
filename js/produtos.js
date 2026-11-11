@@ -237,3 +237,38 @@ newProductButton.addEventListener('click', () => {
 
 clearProductForm.addEventListener('click', resetProductForm);
 loadProducts();
+
+// Funções para adicionar novas opções aos selects
+function adicionarNovaCategoria() {
+  const novaCat = prompt('Digite o nome da nova categoria:');
+  if (novaCat && novaCat.trim() !== '') {
+    const valor = novaCat.trim();
+    
+    // Adiciona no formulário
+    const selectForm = document.getElementById('categoria-select');
+    selectForm.add(new Option(valor, valor, true, true));
+
+    // Adiciona também no filtro de busca
+    const selectFiltro = document.getElementById('filter-category');
+    if (selectFiltro) {
+      selectFiltro.add(new Option(valor, valor));
+    }
+  }
+}
+
+function adicionarNovaOrigem() {
+  const novaOrigem = prompt('Digite o nome da nova origem/motivo:');
+  if (novaOrigem && novaOrigem.trim() !== '') {
+    const valor = novaOrigem.trim();
+
+    // Adiciona no formulário
+    const selectForm = document.getElementById('origem-select');
+    selectForm.add(new Option(valor, valor, true, true));
+
+    // Adiciona também no filtro de busca
+    const selectFiltro = document.getElementById('filter-origin');
+    if (selectFiltro) {
+      selectFiltro.add(new Option(valor, valor));
+    }
+  }
+}
