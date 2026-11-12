@@ -12,6 +12,16 @@ function getSelectedProduct() {
   return products.find((product) => product.id === Number(productSelect.value));
 }
 
+function getProductDatesInfo(product) {
+  const dataEntrada = product.data_entrada || product.created_at;
+  const dataValidade = product.data_validade || product.validade;
+
+  const entradaTexto = dataEntrada ? formatDate(dataEntrada) : 'Não informada';
+  const validadeTexto = dataValidade ? formatDate(dataValidade) : null;
+
+  return { entradaTexto, validadeTexto };
+}
+
 function updateSelectedProduct() {
   const product = getSelectedProduct();
 
@@ -22,20 +32,33 @@ function updateSelectedProduct() {
     return;
   }
 
+  const { entradaTexto, validadeTexto } = getProductDatesInfo(product);
+
   selectedProductName.textContent = product.nome;
   selectedProductStock.textContent = `${Number(product.quantidade).toLocaleString('pt-BR')} ${product.unidade_medida}`;
-  selectedProductMeta.textContent = `${product.categoria} | origem: ${product.origem}`;
+
+  selectedProductMeta.innerHTML = `
+    <strong>Categoria:</strong> ${escapeHtml(product.categoria)}<br>
+    <strong>Origem:</strong> ${escapeHtml(product.origem)}<br>
+    <strong>Data de entrada:</strong> ${escapeHtml(entradaTexto)}
+    ${validadeTexto ? `<br><strong>Validade:</strong> ${escapeHtml(validadeTexto)}` : ''}
+  `;
 }
 
 async function loadProducts() {
   const data = await apiRequest('/api/produtos');
   products = data.data;
 
-  productSelect.innerHTML = '<option value="">Selecione um produto</option>' + products.map((product) => `
-    <option value="${product.id}">
-      ${escapeHtml(product.nome)} - ${Number(product.quantidade).toLocaleString('pt-BR')} ${escapeHtml(product.unidade_medida)}
-    </option>
-  `).join('');
+  productSelect.innerHTML = '<option value="">Selecione um produto</option>' + products.map((product) => {
+    const { entradaTexto, validadeTexto } = getProductDatesInfo(product);
+    const validadeOption = validadeTexto ? ` | Validade: ${validadeTexto}` : '';
+
+    return `
+      <option value="${product.id}">
+        ${escapeHtml(product.nome)} - ${Number(product.quantidade).toLocaleString('pt-BR')} ${escapeHtml(product.unidade_medida)} | Entrada: ${escapeHtml(entradaTexto)}${escapeHtml(validadeOption)}
+      </option>
+    `;
+  }).join('');
 
   updateSelectedProduct();
 }
