@@ -27,7 +27,19 @@ async function loadLoggedUser() {
   const chip = document.querySelector('#user-chip');
 
   if (data && chip) {
-    chip.textContent = `${data.user.nome} (${data.user.tipo_usuario})`;
+    const rawRole =
+      data.user.tipo_usuario ||
+      data.user.perfil ||
+      data.user.funcao ||
+      data.user.tipo ||
+      data.user.role ||
+      '';
+
+    const formattedRole = rawRole
+      ? rawRole.charAt(0).toUpperCase() + rawRole.slice(1).toLowerCase()
+      : 'Sem função';
+
+    chip.textContent = `${data.user.nome} (${formattedRole})`;
   }
 }
 
